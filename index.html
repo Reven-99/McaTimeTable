@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MCA Sem 1 · My Timetable</title>
+<style>
+:root{--bg:#f4f6ff;--card:#fff;--tx:#1b1f3b;--mu:#6b7280;--ac:#4f46e5;--pr:#0ea5e9;--th:#f59e0b;--bd:#e5e7eb;--fr:#f3f4f6;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1226;--card:#1a1e3a;--tx:#eef0ff;--mu:#9aa0c3;--ac:#818cf8;--bd:#2c3158;--fr:#161a33}}
+:root[data-theme="dark"]{--bg:#0f1226;--card:#1a1e3a;--tx:#eef0ff;--mu:#9aa0c3;--ac:#818cf8;--bd:#2c3158;--fr:#161a33}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.w{max-width:900px;margin:0 auto;padding:16px}
+header{background:linear-gradient(135deg,#4f46e5,#7c3aed,#0ea5e9);background-size:200% 200%;animation:g 8s ease infinite;color:#fff;border-radius:20px;padding:20px;position:relative}
+@keyframes g{50%{background-position:100% 50%}}
+h1{margin:0;font-size:22px;padding-right:44px}header p{margin:4px 0 0;opacity:.9;font-size:13px}
+#th{position:absolute;top:14px;right:14px;background:#ffffff33;border:0;color:#fff;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer}
+#clock{font-size:34px;font-weight:700;margin-top:10px;font-variant-numeric:tabular-nums}
+.sel{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px 16px;margin:14px 0}
+.sel h2{margin:0 0 8px;font-size:14px;color:var(--mu);font-weight:600}.sel h2:not(:first-child){margin-top:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.pill,.tabs button,.vt button{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:12px;padding:10px 16px;font-weight:600;cursor:pointer;font-size:14px}
+.pill.on,.tabs button.on,.vt button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.pill small{display:block;font-weight:400;font-size:11px;opacity:.8}
+.hint{color:var(--mu);font-size:13px}
+#now{margin:14px 0;background:var(--card);border:1px solid var(--bd);border-left:6px solid var(--ac);border-radius:16px;padding:14px 16px}
+#now small{color:var(--mu);text-transform:uppercase;letter-spacing:.06em;font-size:11px}
+#now b{display:block;font-size:18px;margin:2px 0}
+.bar{height:6px;background:var(--bd);border-radius:9px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac);transition:width .6s}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:4px 0}
+.tabs button.td::after{content:" •";color:var(--th)}
+.vt{display:flex;gap:6px;margin:10px 0}
+.c{display:flex;gap:12px;align-items:stretch;background:var(--card);border:1px solid var(--bd);border-radius:14px;margin:10px 0;overflow:hidden}
+.t{width:84px;padding:12px;background:var(--fr);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;text-align:center}
+.m{padding:12px 12px 12px 0;flex:1}.m b{display:block}.m span{color:var(--mu);font-size:13px}
+.c.p{border-left:5px solid var(--pr)}.c.h{border-left:5px solid var(--th)}.c.f{opacity:.55;border-left:5px solid var(--bd)}
+.c.live{outline:2px solid var(--ac)}
+.m span.tag{color:#fff}.tag{font-size:10px;border-radius:99px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+.sc{overflow-x:auto}table{border-collapse:separate;border-spacing:4px;width:100%;min-width:640px;font-size:12px;text-align:center}
+th{background:var(--ac);color:#fff;padding:8px;border-radius:8px}th.td{background:var(--th)}
+td{padding:8px 4px;border-radius:8px;background:var(--card);border:1px solid var(--bd)}
+td.p{background:#0ea5e922}td.h{background:#f59e0b22}td.f{color:var(--mu);background:var(--fr)}td.t0{font-weight:700;background:var(--fr)}
+footer{color:var(--mu);font-size:12px;text-align:center;margin:18px 0;line-height:1.6}
+</style></head><body><div class="w">
+<header><button id="th" aria-label="Toggle theme">🌓</button><h1>MCA Sem 1 · My Timetable</h1>
+<p id="who">Select your batches below</p><div id="clock"></div><p id="dt"></p></header>
+<div class="sel"><h2>1. Select your theory batch</h2><div class="row" id="dv"></div>
+<h2>2. Select your practical batch</h2><div class="row" id="bt"></div></div>
+<div id="main" hidden><div id="now"></div>
+<div class="vt"><button id="vd" class="on">Day view</button><button id="vw">Week view</button></div>
+<div id="day"><div class="tabs" id="tabs"></div><div id="list"></div></div>
+<div id="week" class="sc" hidden></div></div>
+<footer>MCA Sem 1 (A, B, C) · Theory from 17 Sep 2026 · Practical from 22 Sep 2026<br>Not included: IMCA classes and the MCA-457(B) DO elective. Python (MCA-416) faculty is not printed on the source timetable.<br>Division B Mon–Wed 2–3 PM theory: B1 → MCA-419(A) Data Science, B2 → MCA-421(A) Web (based on the practical elective).</footer>
+</div>
+<script>
+const D=["Mon","Tue","Wed","Thu","Fri","Sat"];
+const S=[["10:00 – 12:00",10,12],["1:00 – 2:00",13,14],["2:00 – 3:00",14,15],["3:00 – 4:00",15,16],["4:00 – 6:00",16,18]];
+const P=(n,c,l)=>({k:"p",n,c,l}),F={k:"f",n:"Free"};
+const J=(b,x,f)=>P("Java "+b,"MCA-412","Lab "+x+" · "+f),DS=(b,x,f)=>P("DS "+b,"MCA-414","Lab "+x+" · "+f),
+PY=(b,x)=>P("Python "+b,"MCA-416","Lab "+x),DC=(b,x,f)=>P("Data Sci. "+b,"MCA-419(B)","Lab "+x+" · "+f),
+CL=b=>P("Cloud "+b,"MCA-418(B)","Lab 8 · ARP"),WB=P("Web B2","MCA-421(B)","Lab 5 · VNC");
+const PR={
+A1:[[J("A1",1,"MSS"),DC("A1",7,"DGP"),J("A1",1,"MSS"),DC("A1",7,"DGP"),F,PY("A1",6)],[F,DS("A1",6,"VMP"),F,DS("A1",6,"VMP"),PY("A1",8),F]],
+A2:[[DC("A2",7,"DGP"),J("A2",1,"MSS"),DC("A2",7,"DGP"),J("A2",1,"MSS"),PY("A2",6),F],[DS("A2",6,"VMP"),F,DS("A2",6,"VMP"),F,F,PY("A2",8)]],
+B1:[[J("B1",3,"VAP"),F,DS("B1",2,"VMP"),F,J("B1",3,"VAP"),DS("B1",4,"VMP")],[F,PY("B1",7),F,PY("B1",7),DC("B1",6,"HLC"),DC("B1",6,"HLC")]],
+B2:[[F,J("B2",3,"VAP"),F,DS("B2",2,"VMP"),DS("B2",4,"VMP"),J("B2",3,"VAP")],[PY("B2",7),F,PY("B2",7),F,WB,WB]],
+C1:[[PY("C1",6),DS("C1",4,"RRP"),J("C1",3,"VAP"),PY("C1",6),J("C1",1,"VAP"),DS("C1",2,"RRP")],[CL("C1"),F,CL("C1"),F,F,F]],
+C2:[[DS("C2",4,"RRP"),PY("C2",6),PY("C2",6),J("C2",3,"VAP"),DS("C2",2,"RRP"),J("C2",1,"VAP")],[F,CL("C2"),F,CL("C2"),F,F]]};
+const RN={A1:"1–33",A2:"34–65",B1:"66–97",B2:"98–129",C1:"130–159",C2:"160–189"};
+const PRB={A:["A1","A2"],B:["B1","B2"],C:["C1","C2"]};
+const t=(r,c,f)=>({k:"h",n:c,l:f,r}),x3=(a,b)=>[a,a,a,b,b,b];
+const SH="Seminar Hall",C12="Class 12",C11="Class 11";
+const TH={
+A:[x3(t(SH,"MCA-413","MNB"),t(SH,"MCA-411","MSS")),x3(t(SH,"MCA-415","RRP"),t(SH,"MCA-419(A)","DGP")),x3(t(SH,"MCA-417","APP"),F)],
+B:[x3(t(C12,"MCA-417","APP"),t(C12,"MCA-413","MNB")),null,x3(F,t(C12,"MCA-411","VAP"))],
+C:[x3(t(C11,"MCA-411","VAP"),t(C11,"MCA-415","DRN")),x3(t(C11,"MCA-413","MNB"),t(C11,"MCA-417","APP")),x3(F,t(C11,"MCA-418(A)","ARP"))]};
+const $=id=>document.getElementById(id);
+const sub=x=>x.k==="f"?"":x.k==="p"?`${x.c} · ${x.l}`:`Theory · ${x.l} · ${x.r}`;
+let div=null,bt=null,TT=null,sel=0,now=new Date();
+function build(){const th=TH[div].slice();
+if(div==="B")th[1]=x3(bt==="B1"?t(C12,"MCA-419(A)","DGP"):t("Class 7","MCA-421(A)","VNC"),t(C12,"MCA-415","DRN"));
+TT=D.map((_,d)=>[PR[bt][0][d],th[0][d],th[1][d],th[2][d],PR[bt][1][d]])}
+function save(){try{localStorage.setItem("mcatt",JSON.stringify({div,bt}))}catch(e){}}
+function load(){try{const o=JSON.parse(localStorage.getItem("mcatt")||"null");if(o&&PRB[o.div]&&PRB[o.div].includes(o.bt)){div=o.div;bt=o.bt}}catch(e){}}
+const today=()=>{const g=now.getDay();return g===0?-1:g-1};
+function pick(){$("dv").innerHTML=["A","B","C"].map(v=>`<button class="pill ${v===div?"on":""}" data-d="${v}">Division ${v}</button>`).join("");
+$("bt").innerHTML=div?PRB[div].map(b=>`<button class="pill ${b===bt?"on":""}" data-b="${b}">Batch ${b}<small>Roll ${RN[b]}</small></button>`).join(""):'<span class="hint">Select theory batch first</span>';
+document.querySelectorAll("[data-d]").forEach(e=>e.onclick=()=>{div=e.dataset.d;if(!PRB[div].includes(bt))bt=null;save();refresh()});
+document.querySelectorAll("[data-b]").forEach(e=>e.onclick=()=>{bt=e.dataset.b;save();refresh()})}
+function refresh(){pick();const ok=div&&bt;$("main").hidden=!ok;
+$("who").textContent=ok?`Division ${div} · Batch ${bt} · Roll ${RN[bt]}`:"Select your batches below";
+if(ok){build();week();tick()}}
+function tick(){now=new Date();$("clock").textContent=now.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+$("dt").textContent=now.toLocaleDateString([],{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+if(TT){nowCard();render()}}
+function nowCard(){const d=today(),h=now.getHours()+now.getMinutes()/60,el=$("now");
+if(d<0){el.innerHTML="<small>Today</small><b>Sunday – no classes 🎉</b>";return}
+for(let i=0;i<5;i++){const [,a,b]=S[i],x=TT[d][i];if(h>=a&&h<b){const pc=Math.round((h-a)/(b-a)*100);
+el.innerHTML=`<small>Happening now</small><b>${x.n}</b><span>${sub(x)||"Enjoy your break"} · ${S[i][0]}</span><div class="bar"><i style="width:${pc}%"></i></div>`;return}}
+for(let i=0;i<5;i++){const a=S[i][1],x=TT[d][i];if(h<a&&x.k!=="f"){const m=Math.round((a-h)*60);
+el.innerHTML=`<small>Up next · in ${m>=60?Math.floor(m/60)+"h "+m%60+"m":m+" min"}</small><b>${x.n}</b><span>${sub(x)} · ${S[i][0]}</span>`;return}}
+el.innerHTML="<small>Today</small><b>All done for today ✅</b>"}
+function render(){const d=today(),h=now.getHours()+now.getMinutes()/60;
+$("tabs").innerHTML=D.map((n,i)=>`<button class="${i===sel?"on":""} ${i===d?"td":""}" data-i="${i}">${n}</button>`).join("");
+$("list").innerHTML=TT[sel].map((x,i)=>{const live=sel===d&&h>=S[i][1]&&h<S[i][2];
+return `<div class="c ${x.k} ${live?"live":""}"><div class="t">${S[i][0].replace(" – ","<br>")}</div><div class="m"><b>${x.n}${x.k==="p"?'<span class="tag" style="background:var(--pr)">PRACTICAL</span>':x.k==="h"?'<span class="tag" style="background:var(--th)">THEORY</span>':""}</b><span>${sub(x)}</span></div></div>`}).join("");
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{sel=+b.dataset.i;render()})}
+function week(){const d=today();let h="<table><tr><th>Time</th>"+D.map((n,i)=>`<th class="${i===d?"td":""}">${n}</th>`).join("")+"</tr>";
+S.forEach((s,r)=>{h+=`<tr><td class="t0">${s[0]}</td>`+D.map((_,c)=>{const x=TT[c][r];return `<td class="${x.k}">${x.k==="f"?"Free":`<b>${x.n}</b><br>${x.k==="p"?x.c+"<br>"+x.l:x.l+"<br>"+x.r}`}</td>`}).join("")+"</tr>"});
+$("week").innerHTML=h+"</table>"}
+$("vd").onclick=()=>{$("day").hidden=false;$("week").hidden=true;$("vd").classList.add("on");$("vw").classList.remove("on")};
+$("vw").onclick=()=>{$("day").hidden=true;$("week").hidden=false;$("vw").classList.add("on");$("vd").classList.remove("on")};
+$("th").onclick=()=>{const r=document.documentElement,dk=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;r.dataset.theme=dk?"light":"dark"};
+load();sel=today()<0?0:today();refresh();tick();setInterval(tick,1000);
+</script></body></html>
